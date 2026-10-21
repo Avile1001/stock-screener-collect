@@ -149,7 +149,11 @@ def history_of(item_code):
 
 def row_from(quote, bars):
     closes = [bar[1] for bar in bars]
-    ma5, ma20, ma60, ma120 = (sma(closes, period) for period in (5, 20, 60, 120))
+    averages = []
+    for period in (5, 20, 60, 120):
+        value = sma(closes, period)
+        averages.append(None if value is None else int(round(value)))
+    ma5, ma20, ma60, ma120 = averages
     volume = int(round(bars[0][2])) if bars else quote["volume"]
     prev_volume = int(round(bars[1][2])) if len(bars) > 1 else 0
     ratio = round(volume / prev_volume, 2) if prev_volume else None
@@ -166,10 +170,10 @@ def row_from(quote, bars):
         "prevVolume": prev_volume,
         "volumeRatio": ratio,
         "value": price * volume,
-        "ma5": None if ma5 is None else int(round(ma5)),
-        "ma20": None if ma20 is None else int(round(ma20)),
-        "ma60": None if ma60 is None else int(round(ma60)),
-        "ma120": None if ma120 is None else int(round(ma120)),
+        "ma5": ma5,
+        "ma20": ma20,
+        "ma60": ma60,
+        "ma120": ma120,
         "alignment": alignment_of(ma5, ma20, ma60, ma120),
     }
 
